@@ -1,9 +1,9 @@
-export class CreateTaskDto {
-  title: string;
-  description: string;
+import { IsNotEmpty } from 'class-validator';
 
-  constructor(body) {
-    this.title = body.title;
-    this.description = body.description;
-  }
+export class CreateTaskDto {
+  @IsNotEmpty()
+  title: string;
+
+  @IsNotEmpty()
+  description: string;
 }
