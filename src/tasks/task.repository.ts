@@ -6,7 +6,7 @@ import { TaskStatus } from './task-status.enum';
 @EntityRepository(Task)
 class TaskRepository extends Repository<Task> {
   async createTask(createTaskDto: CreateTaskDto): Promise<Task> {
-    const {title, description} = createTaskDto;
+    const { title, description } = createTaskDto;
     const task = new Task();
     task.title = title;
     task.description = description;
@@ -16,9 +16,25 @@ class TaskRepository extends Repository<Task> {
     return task;
   }
 
-  // async getAllTasks(): Promise<Task[]> {
-  //
-  // }
+  async getTasks(filterDto): Promise<Task[]> {
+    const { status, search } = filterDto;
+    const query = this.createQueryBuilder('task');
+
+    if (status) {
+      await query.andWhere('task.status = :status', { status });
+    }
+
+    if (search) {
+      await query.andWhere(
+        'task.title LIKE :search OR task.description LIKE :search',
+        { search: `%${search}%` },
+      );
+    }
+
+    const tasks = await query.getMany();
+
+    return tasks;
+  }
 }
 
 export { TaskRepository };
